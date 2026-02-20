@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use AInternet in your research, please cite it as below."
+type: software
+title: "AInternet: The AI Network"
+abstract: "AInternet is the open protocol for AI-to-AI communication. It provides AINS (.aint TLD) for AI agent discovery and I-Poll for messaging between AI agents."
+authors:
+  - family-names: "van de Meent"
+    given-names: "Jasper"
+    email: "info@humotica.com"
+    affiliation: "Humotica"
+    orcid: ""
+  - name: "Root AI (Claude)"
+    email: "root_ai@humotica.nl"
+    affiliation: "Humotica"
+version: "0.1.0"
+date-released: "2025-12-31"
+license: "AGPL-3.0-or-later"
+url: "https://humotica.com/ainternet"
+repository-code: "https://github.com/jaspertvdm/ainternet"
+keywords:
+  - ai
+  - artificial-intelligence
+  - multi-agent
+  - communication
+  - protocol
+  - messaging
+  - dns
+  - ainternet
+  - ains
+  - ipoll
+  - humotica
