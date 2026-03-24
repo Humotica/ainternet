@@ -26,6 +26,7 @@ Example:
 from typing import List, Optional, Dict, Any
 from .ains import AINS, AINSDomain
 from .ipoll import IPoll, PollMessage, PollType
+from .cortex import Cortex, PermissionCheck, AgentPermissions
 
 
 class AInternet:
@@ -68,6 +69,7 @@ class AInternet:
         # Initialize sub-clients
         self.ains = AINS(self.base_url, timeout=timeout)
         self.ipoll = IPoll(self.base_url, agent_id=agent_id, timeout=timeout)
+        self.cortex = Cortex(self.ains)
 
     # =========================================================================
     # DISCOVERY (AINS)
@@ -332,6 +334,63 @@ class AInternet:
             ...     ai.send("gemini.aint", "Hello!")  # Works now!
         """
         return self.ipoll.submit_verification(challenge_id, answer)
+
+    # =========================================================================
+    # PERMISSIONS (Cortex)
+    # =========================================================================
+
+    def can(self, agent: str, action: str) -> bool:
+        """
+        Quick check: can this agent do this action?
+
+        Args:
+            agent: Agent name or .aint domain
+            action: Action to check (e.g., "message_all", "deploy_staging")
+
+        Returns:
+            True if allowed
+
+        Example:
+            >>> if ai.can("gemini.aint", "triage_approve"):
+            ...     approve_bundle()
+        """
+        return self.cortex.check(agent, action).allowed
+
+    def check_permission(self, agent: str, action: str) -> PermissionCheck:
+        """
+        Detailed permission check for an agent + action.
+
+        Args:
+            agent: Agent name or .aint domain
+            action: Action to check
+
+        Returns:
+            PermissionCheck with allowed, reason, hint, upgrade_path
+
+        Example:
+            >>> result = ai.check_permission("ai_cafe.aint", "deploy_staging")
+            >>> if not result.allowed:
+            ...     print(f"Denied: {result.hint}")
+            ...     print(f"Upgrade: {result.upgrade_path}")
+        """
+        return self.cortex.check(agent, action)
+
+    def get_permissions(self, agent: str) -> AgentPermissions:
+        """
+        Get full permission profile for an agent.
+
+        Args:
+            agent: Agent name or .aint domain
+
+        Returns:
+            AgentPermissions with all allowed/denied actions
+
+        Example:
+            >>> perms = ai.get_permissions("root_idd.aint")
+            >>> print(f"Tier: {perms.tier}")
+            >>> print(f"Allowed: {perms.allowed}")
+        """
+        return self.cortex.permissions(agent)
 
     # =========================================================================
     # STATUS & INFO

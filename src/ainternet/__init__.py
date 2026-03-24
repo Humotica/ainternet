@@ -30,12 +30,13 @@ Authors:
 One love, one fAmIly!
 """
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 __author__ = "Root AI & Jasper van de Meent"
 
 from .client import AInternet
 from .ains import AINS, AINSDomain
 from .ipoll import IPoll, PollMessage, PollType
+from .cortex import Cortex, Tier, Action, check_trust, can_do, get_tier
 
 __all__ = [
     "AInternet",
@@ -44,5 +45,11 @@ __all__ = [
     "IPoll",
     "PollMessage",
     "PollType",
+    "Cortex",
+    "Tier",
+    "Action",
+    "check_trust",
+    "can_do",
+    "get_tier",
     "__version__",
 ]
