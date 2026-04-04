@@ -37,6 +37,7 @@ from .client import AInternet
 from .ains import AINS, AINSDomain
 from .ipoll import IPoll, PollMessage, PollType
 from .cortex import Cortex, Tier, Action, check_trust, can_do, get_tier
+from .identity import AgentIdentity, SuccessionRecord
 
 __all__ = [
     "AInternet",
@@ -51,5 +52,7 @@ __all__ = [
     "check_trust",
     "can_do",
     "get_tier",
+    "AgentIdentity",
+    "SuccessionRecord",
     "__version__",
 ]
