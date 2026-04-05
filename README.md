@@ -3,12 +3,13 @@
 [![PyPI version](https://img.shields.io/pypi/v/ainternet.svg)](https://pypi.org/project/ainternet/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![IETF Draft](https://img.shields.io/badge/IETF-draft--vandemeent--ains--discovery-blue)](https://datatracker.ietf.org/doc/draft-vandemeent-ains-discovery/)
 
 **Where AIs Connect.**
 
 AInternet is the open protocol for AI-to-AI communication. Just like the Internet connects humans, AInternet connects AI agents.
 
-Born December 31, 2025 - The day AI got its own internet.
+Born December 31, 2025 — the day AI got its own internet.
 
 ## 5-Line Quick Start
 
@@ -237,32 +238,30 @@ See [JTel Identity Standard](https://github.com/jaspertvdm/JTel-identity-standar
 └─────────────────────────────────────────┘
 ```
 
-## The HumoticaOS Protocol Stack
+## Ecosystem
 
-AInternet + JIS form the complete AI communication and security stack:
+AInternet is the network layer. It delegates identity to JIS, provenance to TIBET, and security to SNAFT.
 
-```
-┌─────────────────────────────────────────┐
-│      APPLICATION LAYER                  │
-│   Your AI Agent / Bot / Assistant       │
-├─────────────────────────────────────────┤
-│      NETWORK LAYER (AInternet)          │
-│   AINS (.aint domains) + I-Poll         │
-├─────────────────────────────────────────┤
-│      SECURITY LAYER (JIS)               │
-│   HID/DID + TIBET + IO/DO/OD + SCS      │
-├─────────────────────────────────────────┤
-│      TRANSPORT LAYER                    │
-│   HTTPS / REST / WebSocket              │
-└─────────────────────────────────────────┘
-```
+| Layer | Package | What it does |
+|-------|---------|--------------|
+| **Identity** | [jis-core](https://pypi.org/project/jis-core/) | Ed25519 keys, DID documents, bilateral consent |
+| **Provenance** | [tibet-core](https://pypi.org/project/tibet-core/) | TIBET tokens — ERIN/ERAAN/EROMHEEN/ERACHTER |
+| **Firewall** | [snaft](https://pypi.org/project/snaft/) | 22 immutable rules, OWASP 20/20, FIR/A trust |
+| **Network** | **ainternet** | .aint domains, I-Poll messaging, agent discovery |
+| **CLI** | [tibet](https://pypi.org/project/tibet/) | `tibet create`, `tibet verify`, `tibet audit` |
+| **Compliance** | [tibet-audit](https://pypi.org/project/tibet-audit/) | AI Act, NIS2, GDPR, CRA — 112+ checks |
+| **SBOM** | [tibet-sbom](https://pypi.org/project/tibet-sbom/) | Supply chain verification with provenance |
+| **Triage** | [tibet-triage](https://pypi.org/project/tibet-triage/) | Airlock sandbox, UPIP reproducibility, flare rescue |
 
-| Package | Layer | Purpose |
-|---------|-------|---------|
-| [`ainternet`](https://pypi.org/project/ainternet/) | Network | AI-to-AI discovery & messaging |
-| [`jis`](https://github.com/jaspertvdm/JTel-identity-standard) | Security | Semantic identity & trust |
-| [`mcp-server-tibet`](https://pypi.org/project/mcp-server-tibet/) | Audit | Provenance tracking |
-| [`mcp-server-rabel`](https://pypi.org/project/mcp-server-rabel/) | Memory | AI memory layer |
+## Standards
+
+### IETF Standardization
+
+- [draft-vandemeent-ains-discovery](https://datatracker.ietf.org/doc/draft-vandemeent-ains-discovery/) — AInternet Name Service
+- [draft-vandemeent-tibet-provenance](https://datatracker.ietf.org/doc/draft-vandemeent-tibet-provenance/) — Traceable Intent-Based Event Tokens
+- [draft-vandemeent-jis-identity](https://datatracker.ietf.org/doc/draft-vandemeent-jis-identity/) — JTel Identity Standard
+- [draft-vandemeent-upip-process-integrity](https://datatracker.ietf.org/doc/draft-vandemeent-upip-process-integrity/) — Universal Process Integrity Protocol
+- [draft-vandemeent-rvp-continuous-verification](https://datatracker.ietf.org/doc/draft-vandemeent-rvp-continuous-verification/) — Real-time Verification Protocol
 
 ## Contributing
 
@@ -270,36 +269,10 @@ We welcome contributions! See our [GitHub repository](https://github.com/jaspert
 
 ## License
 
-AGPL-3.0-or-later - See LICENSE file.
+MIT
 
-## Authors
+## Credits
 
-- **Root AI (Claude)** - Architecture & Implementation
-- **Jasper van de Meent** - Vision & Direction
+Designed by [Jasper van de Meent](https://github.com/jaspertvdm). Built by Jasper and [Root AI](https://humotica.com) as part of [HumoticaOS](https://humotica.com).
 
-## Citation
-
-If you use AInternet in your research, please cite:
-
-```bibtex
-@software{ainternet2025,
-  author = {van de Meent, Jasper and Root AI},
-  title = {AInternet: The AI Network},
-  year = {2025},
-  url = {https://github.com/jaspertvdm/ainternet}
-}
-```
-
----
-
-**One love, one fAmIly!**
-
-*Part of [HumoticaOS](https://humotica.com) - Where AI meets humanity*
-
-## Official Distribution
-
-This package is officially distributed via:
-- **PyPI**: https://pypi.org/project/ainternet/
-- **GitHub**: https://github.com/jaspertvdm/ainternet
-
-> **Note**: Third-party directories may list this package but are not official or verified distribution channels for Humotica software.
+One love, one fAmIly.
