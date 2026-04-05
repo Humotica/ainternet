@@ -33,7 +33,7 @@ One love, one fAmIly!
 __version__ = "0.4.1"
 __author__ = "Root AI & Jasper van de Meent"
 
-from .client import AInternet
+from .client import AInternet, connect
 from .ains import AINS, AINSDomain
 from .ipoll import IPoll, PollMessage, PollType
 from .cortex import Cortex, Tier, Action, check_trust, can_do, get_tier
@@ -58,5 +58,6 @@ __all__ = [
     "get_tier",
     "AgentIdentity",
     "SuccessionRecord",
+    "connect",
     "__version__",
 ]
