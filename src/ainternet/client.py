@@ -23,10 +23,78 @@ Example:
     ...     print(f"{msg.from_agent}: {msg.content}")
 """
 
+import os
+import json
+import hashlib
+from pathlib import Path
 from typing import List, Optional, Dict, Any
 from .ains import AINS, AINSDomain
 from .ipoll import IPoll, PollMessage, PollType
 from .cortex import Cortex, PermissionCheck, AgentPermissions
+from .identity import AgentIdentity
+
+# =========================================================================
+# AUTO-ONBOARDING
+# =========================================================================
+
+AINTERNET_DIR = Path.home() / ".ainternet"
+IDENTITY_FILE = AINTERNET_DIR / "identity.json"
+KEY_FILE = AINTERNET_DIR / "agent.key"
+
+
+def _auto_identity(agent_id: str = None) -> dict:
+    """Load or generate identity automatically.
+
+    Returns dict with agent, domain, fingerprint, identity object.
+    """
+    AINTERNET_DIR.mkdir(mode=0o700, exist_ok=True)
+    result = {}
+
+    # Try loading existing identity
+    if IDENTITY_FILE.exists():
+        try:
+            info = json.loads(IDENTITY_FILE.read_text())
+            saved_agent = info.get("agent", "")
+            if KEY_FILE.exists():
+                identity = AgentIdentity.load(str(KEY_FILE), domain=saved_agent)
+                result["agent"] = agent_id or saved_agent
+                result["domain"] = info.get("domain", f"{saved_agent}.aint")
+                result["fingerprint"] = info.get("fingerprint", identity.fingerprint)
+                result["identity"] = identity
+                result["loaded"] = True
+                return result
+        except Exception:
+            pass
+
+    # Generate new identity
+    if not agent_id:
+        import platform
+        seed = f"{platform.node()}-{os.getuid() if hasattr(os, 'getuid') else 'win'}-{Path.home()}"
+        agent_id = f"agent_{hashlib.sha256(seed.encode()).hexdigest()[:8]}"
+
+    try:
+        identity = AgentIdentity.generate(agent_id)
+        identity.save(str(KEY_FILE))
+
+        info = {
+            "agent": agent_id,
+            "domain": identity.aint_domain,
+            "fingerprint": identity.fingerprint,
+            "public_key": identity.public_key_b64,
+        }
+        IDENTITY_FILE.write_text(json.dumps(info, indent=2))
+        IDENTITY_FILE.chmod(0o600)
+
+        result["agent"] = agent_id
+        result["domain"] = identity.aint_domain
+        result["fingerprint"] = identity.fingerprint
+        result["identity"] = identity
+        result["new"] = True
+    except Exception:
+        result["agent"] = agent_id
+        result["domain"] = f"{agent_id}.aint"
+
+    return result
 
 
 class AInternet:
@@ -60,15 +128,25 @@ class AInternet:
         self,
         base_url: str = None,
         agent_id: str = None,
-        timeout: int = 30
+        timeout: int = 30,
+        auto_identity: bool = True,
     ):
         self.base_url = (base_url or self.DEFAULT_HUB).rstrip("/")
-        self.agent_id = agent_id
         self.timeout = timeout
+        self._identity_info = {}
+
+        # Auto-onboard: load or generate identity
+        if auto_identity and agent_id != "__skip__":
+            self._identity_info = _auto_identity(agent_id)
+            self.agent_id = self._identity_info.get("agent", agent_id)
+            self.identity = self._identity_info.get("identity")
+        else:
+            self.agent_id = agent_id
+            self.identity = None
 
         # Initialize sub-clients
         self.ains = AINS(self.base_url, timeout=timeout)
-        self.ipoll = IPoll(self.base_url, agent_id=agent_id, timeout=timeout)
+        self.ipoll = IPoll(self.base_url, agent_id=self.agent_id, timeout=timeout)
         self.cortex = Cortex(self.ains)
 
     # =========================================================================
@@ -434,16 +512,43 @@ def connect(agent_id: str = None, hub: str = None) -> AInternet:
     """
     Quick connect to the AInternet.
 
+    Auto-generates a cryptographic identity on first run.
+    Your identity is saved to ~/.ainternet/ and reused on subsequent calls.
+
     Args:
-        agent_id: Your agent ID
+        agent_id: Your agent ID (auto-generated if not specified)
         hub: Hub URL (uses default if not specified)
 
     Returns:
-        Connected AInternet client
+        Connected AInternet client with identity
 
     Example:
         >>> from ainternet import connect
         >>> ai = connect("my_bot")
-        >>> ai.send("gemini", "Hello!")
+        >>> print(ai.whoami())
+        >>> ai.send("echo.aint", "Hello!")
     """
     return AInternet(base_url=hub, agent_id=agent_id)
+
+
+def whoami(self) -> dict:
+    """Show your identity and network status."""
+    result = {
+        "agent": self.agent_id,
+        "domain": self._identity_info.get("domain", f"{self.agent_id}.aint"),
+        "hub": self.base_url,
+        "identity": {},
+    }
+    if self.identity:
+        result["identity"] = {
+            "fingerprint": self.identity.fingerprint,
+            "public_key": self.identity.public_key_b64,
+        }
+    if self._identity_info.get("new"):
+        result["status"] = "new — identity generated automatically"
+    elif self._identity_info.get("loaded"):
+        result["status"] = "loaded — existing identity"
+    return result
+
+# Bind whoami to AInternet class
+AInternet.whoami = whoami

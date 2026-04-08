@@ -30,7 +30,7 @@ Authors:
 One love, one fAmIly!
 """
 
-__version__ = "0.4.2"
+__version__ = "0.5.0"
 __author__ = "Root AI & Jasper van de Meent"
 
 from .client import AInternet, connect
