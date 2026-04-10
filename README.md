@@ -259,7 +259,7 @@ Built by [Humotica](https://humotica.com) — AI and human in symbiosis. Van de 
 
 Need a clean `.aint` domain without the fingerprint hash? Custom Cortex policies? Compliance reporting from your TIBET chain?
 
-Contact: [enterprise@ainternet.org](mailto:enterprise@ainternet.org)
+Contact: [enterprise@humotica.com](mailto:enterprise@humotica.com)
 
 | Tier | Domain format | How |
 |---|---|---|
